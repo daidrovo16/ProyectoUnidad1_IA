@@ -1,22 +1,8 @@
-"""
-    Link de github:
-    https://github.com/daidrovo16/ProyectoUnidad1_IA.git  
-    
-    Agente que implementa el algoritmo de busqueda en profundidad, para las paradas de autobuses de la ciudad.
-    Para ello, utiliza una estructura de datos para almacenar los nodos visitados, y una lista para almacenar los nodos
-    que se van a visitar.    
-"""
-from collections import deque
-
 # Una clase para representar un objeto gráfico
-"""
-    Se crea una clase para representar un objeto gráfico. En este caso, las paradas de autobuses de la ciudad. Para esto se utiliza una matriz de enteros.
-    La cual representa la matriz de la ciudad.    
-"""
 class Graph:
+ 
     # Constructor
     def __init__(self, edges, n):
- 
         # Una lista de listas para representar una lista de adyacencia
         self.adjList = [[] for _ in range(n)]
  
@@ -26,58 +12,79 @@ class Graph:
             self.adjList[dest].append(src)
  
  
-# Realizar DFS iterativo en el gráfico a partir del vértice `v`
-def iterativeDFS(graph, v, discovered):
- 
-    # crea una pila utilizada para hacer DFS iterativo
-    stack = deque()
- 
-    # inserta el nodo de origen en la pila
-    stack.append(v)
- 
-    # Bucle # hasta que la pila esté vacía
-    while stack:
-        # Extrae un vértice de la pila
-        v = stack.pop()
- 
-        # si el vértice ya está descubierto, ignóralo
-        if discovered[v]:
-            continue
- 
-        # llegaremos aquí si el vértice reventado `v` aún no se descubre;
-        # imprime `v` y procesa sus nodos adyacentes no descubiertos en la pila
-        discovered[v] = True
-        print(v, end=' ')
+# Realiza DFS en el gráfico comenzando desde el vértice `v` y encuentra los puentes
+# todos los puentes en el proceso
 
-        # do para cada arista (v, u)
-        adjList = graph.adjList[v]
-        for i in reversed(range(len(adjList))):
-            u = adjList[i]
-            if not discovered[u]:
-                stack.append(u)
+
+def DFS(graph, v, visited, arrival, parent, time, bridges):
+    # establece el tiempo de llegada del vértice `v`
+    time = time + 1
+    arrival[v] = time
+ 
+    # marcar vértice como visitado
+    visited[v] = True
+ 
+    # inicializa `t` con el tiempo de llegada del vértice `v`
+    t = arrival[v]
+ 
+    # (v, w) forma un borde
+    for w in graph.adjList[v]:
+ 
+        # si no se visita `w`
+        if not visited[w]:
+            t = min(t, DFS(graph, w, visited, arrival, v, time, bridges))
+ 
+        # si se visita `w` y `w` no es padre de `v`
+        elif w != parent:
+            # Si el vértice `w` ya está visitado, no
+            # es un borde posterior que comienza con `v`. Tenga en cuenta que como `visitado[u]`
+            # ya es cierto, la llegada[u] ya está definida
+            t = min(t, arrival[w])
+ 
+    # si el valor de `t` permanece sin cambios, es decir, es igual
+    # al tiempo de llegada del vértice `v`, y si `v` no es el nodo raíz,
+    # entonces (padre[v] —> v) forma un puente
+    if t == arrival[v] and parent != -1:
+        bridges.add((parent, v))
+ 
+    # devuelve el tiempo mínimo de llegada
+    return t
+ 
+ 
+def findBridges(graph, n):
+ 
+    # para realizar un seguimiento de si se visita un vértice o no
+    visited = [False] * n
+ 
+    # almacena el tiempo de llegada de un nodo en DFS
+    arrival = [None] * n
+ 
+    start = 0
+    parent = -1
+    time = 0
+ 
+    bridges = set()
+ 
+    # Como el gráfico dado está conectado, DFS cubrirá todos los nodos
+    DFS(graph, start, visited, arrival, parent, time, bridges)
+ 
+    return bridges
  
  
 if __name__ == '__main__':
  
-    # Lista de bordes de gráficos según el diagrama anterior
-    edges = [
-        # Se observa los pares de nodos que se conectan, se mostrara un cambio en para las paradas (Se realiza este a partado a modo ejemplo)
-        (1, 2), (1, 7), (1, 8), (2, 3), (2, 6), (3, 4),
-        (3, 5), (8, 9), (8, 12), (9, 10), (9, 11)
-    ]
+    # (u, v) el triplete representa una arista no dirigida desde el vértice `u` hasta el vértice `v`
+    edges = [(0, 2), (1, 2), (2, 3), (2, 4), (3, 4), (3, 5)]
  
-    # número total de nodos en el gráfico (etiquetados de 0 a 12)
-    n = 13
+    # número total de nodos en el gráfico (0 a 6)
+    n = 6
  
-    # construye un gráfico a partir de los bordes dados
+    # gráfico de construcción
     graph = Graph(edges, n)
  
-    # para realizar un seguimiento de si se descubre un vértice o no
-    discovered = [False] * n
+    bridges = findBridges(graph, n)
+    if bridges:
+        print('Bridges are', bridges)
+    else:
+        print('Graph is 2–Edge Connected')
  
-    # Hacer un recorrido DFS iterativo desde todos los nodos no descubiertos hasta
-    # cubre todos los componentes conectados de un gráfico
-    for i in range(n):
-        if not discovered[i]:
-            iterativeDFS(graph, i, discovered)
-
