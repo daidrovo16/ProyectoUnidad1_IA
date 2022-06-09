@@ -58,7 +58,7 @@ while x > 17:
         y+=1
     x+=1
     y=0
-pro= (100-((z/16)*100))
+pro= (100-((z/289)*100))
 print("Se detectaron pasajeros en las paradas y se quedan en la parada")
 display(paradas)
 print('Medida de Desempenio=',pro,'%')
