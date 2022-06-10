@@ -121,7 +121,7 @@ if __name__ == '__main__':
             (25,10),
             (25,17)
             ]
-    nodos = 26 #número total de nodos de paradas en el gráfo (0 a 26)
+    nodos = 26 #número total de nodos de paradas en el gráfo (0 a 2)
 
     grafo = Grafo(bordes, nodos) #Representa el grafo de construccion
 
