@@ -1,4 +1,8 @@
-
+"""
+    Link de github:
+    https://github.com/daidrovo16/ProyectoUnidad1_IA.git    
+    Agente que implementa el algoritmo de paradas de autobuses de la ciudad. 
+"""
 class Grafo:
     """_summary_()
     Una clase para representar un objeto gráfico
@@ -121,7 +125,7 @@ if __name__ == '__main__':
             (25,10),
             (25,17)
             ]
-    nodos = 26 #número total de nodos de paradas en el gráfo (0 a 2)
+    nodos = 26 #número total de nodos de paradas en el gráfo (0 a 26)
 
     grafo = Grafo(bordes, nodos) #Representa el grafo de construccion
 
